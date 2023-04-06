@@ -174,12 +174,16 @@ class DiffWindow:
     for row in lhs: self.lwidth = max(len(row),self.lwidth)
     self.rwidth = 0
     for row in rhs: self.rwidth = max(len(row),self.rwidth)
+    # shift amount for pane boundary, division between lhs/rhs views
+    paneshmt = 0
     # track top left 'coordinate' of the text in the lists
     # the l/rpos is the starting row + col to display
     lpos = [0,0] # lpos[0] is starting row
     rpos = [0,0] # rpos[1] is starting col
     # track the last known height/width as the window could be resized
     lastheight, lastwidth = self.stdscr.getmaxyx()
+    middle = lastwidth//2
+    if middle > self.lwidth+4: paneshmt -= (self.lwidth-2)
     # allow independent scrolling
     singlescroll = False
     # side toggle for independent scrolling
@@ -188,8 +192,6 @@ class DiffWindow:
                     else not singlescroll or not leftscroll
     # toggle for whether to highlight matching lines
     highlight = True
-    # shift amount for pane boundary, division between lhs/rhs views
-    paneshmt = 0
     # these chars will quit: escape = 27, 'Q'=81, 'q'=113
     # we'll start at home
     ch = curses.KEY_HOME
