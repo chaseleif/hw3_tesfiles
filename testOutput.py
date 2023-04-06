@@ -40,8 +40,7 @@ test: obj/$(BIN) test/diffwin.py test/testOutput.py
 --program $<
 '''
 
-import argparse, difflib, os, sys
-from glob import glob
+import argparse, difflib, re, os, sys
 from signal import Signals
 from subprocess import Popen, PIPE
 sys.dont_write_bytecode = True
@@ -182,7 +181,10 @@ if __name__ == '__main__':
   elif args['exppath'][-1] != '/': args['exppath'] += '/'
   for inFile in os.listdir(args['testpath']):
     # These are the expected output files (with parameters)
-    expFiles = glob(args['exppath'] + inFile + '_*')
+    print(os.listdir(args['exppath']))
+    expFiles = [args['exppath'] + '/' + name \
+                  for name in os.listdir(args['exppath']) \
+                  if re.search(inFile + r'_[0-9]+_[0-9]+$', name)]
     if len(expFiles) == 0: continue
     # Link the test file to the expected output files
     cases[args['testpath'] + inFile] = expFiles

@@ -44,12 +44,15 @@ New files should be named in the same manner as example test files provided
 
 ### Test file naming convention:
 
+You can create your own test inputs and expected outputs  
+  
 > Due to the naming convention of input/output files specified below,  
 > input and associated expected output files can be in the same directory.  
 > Input files, to be ran and tested, require an associated expected output.  
 > The parameters, num\_entries and associativity, are in the output filename.  
   
-Input files begin with a prefix, e.g., input, input0, test2  
+Input files begin with a prefix, e.g., input0, input1, test2  
+Avoid confusion, don't use the same prefix, e.g., input, input0  
 Expected output files begin with the same prefix and contain the parameters  
 - test2
 - test2\_numentries\_associativity
