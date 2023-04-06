@@ -181,7 +181,7 @@ if __name__ == '__main__':
   elif args['exppath'][-1] != '/': args['exppath'] += '/'
   for inFile in os.listdir(args['testpath']):
     # These are the expected output files (with parameters)
-    expFiles = [args['exppath'] + '/' + name \
+    expFiles = [args['exppath'] + name \
                   for name in os.listdir(args['exppath']) \
                   if re.search(inFile + r'_[0-9]+_[0-9]+$', name)]
     if len(expFiles) == 0: continue
