@@ -40,9 +40,9 @@ test: obj/$(BIN) test/diffwin.py test/testOutput.py
 --program $<
 '''
 
-import argparse, difflib, re, os, sys
+import argparse, difflib, re, os, shlex, sys
 from signal import Signals
-from subprocess import Popen, PIPE
+from subprocess import Popen, DEVNULL, PIPE
 sys.dont_write_bytecode = True
 try:
   from diffwin import DiffWindow
@@ -64,8 +64,10 @@ runproc(cmd, filepos, filename)
 '''
 def runproc(cmd):
   try:
-    proc = Popen(cmd, stdin = PIPE, stdout = PIPE, stderr = PIPE,
-                  shell = True, universal_newlines = True)
+    cmd = os.getcwd() + os.path.sep + cmd
+    cmd = shlex.split(cmd)
+    proc = Popen(cmd, stdin = DEVNULL, stdout = PIPE, stderr = PIPE,
+                  universal_newlines = True)
     output = proc.communicate()
     return output, proc.returncode
   except Exception as e:
@@ -103,10 +105,10 @@ def dotests(cases, program):
       # Handle bad return codes
       if output[1] != 0:
         print('~~ cmd:', cmd + '\n')
-        if len(output[0][0]) > 0 and output[0][0].rstrip() != '':
+        if output[0][0].rstrip() != '':
           print('~~ stdout:')
           print(output[0][0].rstrip() + '\n')
-        if len(output[0][1]) > 0 and output[0][1].rstrip() != '':
+        if output[0][1].rstrip() != '':
           print('~~ stderr:')
           print(output[0][1].rstrip() + '\n')
         if os.path.isfile('cache_sim_output'):
@@ -136,7 +138,7 @@ def dotests(cases, program):
       exp = []
       with open(expfile, 'r') as infile:
         exp = [line.rstrip() for line in infile.readlines() \
-                                if line.strip() != '\n']
+                                if line.strip() != '']
       # Check for an exact match
       matches = True if len(out) == len(exp) else False
       if matches:

@@ -25,6 +25,6 @@ test/testOutput.py: testOutput.py
 test: $(BIN) test/diffwin.py test/testOutput.py
 	python3 ./test/testOutput.py \
 --testpath test/cases --exppath test/exp \
---program ./$<
+--program $<
 
 # vim: noexpandtab
