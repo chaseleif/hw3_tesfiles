@@ -90,8 +90,8 @@ def dotests(cases, program):
   # For each test input file . . .
   for inFile in cases:
     # inFile could be: "input0"
-    # The test name is the filename without any extension
-    test = inFile.split('.')[0].split('/')[-1]
+    # The test name is the filename
+    test = inFile.split(os.path.sep)[-1]
     for expfile in cases[inFile]:
       # expfile could be: "input0_1024_8"
       num_entries = expfile.split('_')[-2]
@@ -109,6 +109,11 @@ def dotests(cases, program):
         if len(output[0][1]) > 0 and output[0][1].rstrip() != '':
           print('~~ stderr:')
           print(output[0][1].rstrip() + '\n')
+        if os.path.isfile('cache_sim_output'):
+          print('~~ cache_sim_output:')
+          with open('cache_sim_output','r') as infile:
+            print(infile.read().rstrip() + '\n')
+          os.remove('cache_sim_output')
         if output[1] > 0:
           print('~~', program, 'terminated with exception')
         else:
@@ -176,9 +181,9 @@ if __name__ == '__main__':
   # Collect the input files in a dictionary
   # key = inFile, value = (expFile or None)
   cases = {}
-  if args['testpath'][-1] != '/': args['testpath'] += '/'
+  if args['testpath'][-1] != os.path.sep: args['testpath'] += os.path.sep
   if 'exppath' not in args: args['exppath'] = args['testpath']
-  elif args['exppath'][-1] != '/': args['exppath'] += '/'
+  elif args['exppath'][-1] != os.path.sep: args['exppath'] += os.path.sep
   for inFile in os.listdir(args['testpath']):
     # These are the expected output files (with parameters)
     expFiles = [args['exppath'] + name \
