@@ -1,5 +1,5 @@
 CC:=gcc
-CFLAGS:=-Wall
+CFLAGS:=-Wall -std=c99
 DEBUGFLAGS:=-O0 -g
 
 BIN:=cache_sim

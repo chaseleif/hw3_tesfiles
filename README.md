@@ -8,8 +8,8 @@ The Makefile given will work on Linux systems
 ### Variables which likely need to be modified:
 
 - CC:=gcc <- This sets the compiler to gcc and may need to be g++
-- CFLAGS:=-Wall <- This turns some warnings on, may need -std=c99, etc.  
-*Can be space-separated. Ensure any flags required are available on Zeus!*  
+- CFLAGS:=-Wall -std=c99 <- This turns some warnings on and -std=c99  
+*Ensure any flags required are available on Zeus!*  
 - SOURCE:=cache\_sim.c <- This is my (single) source file name  
 *If you have a multi-source solution you could use a space-separated list here*
 
