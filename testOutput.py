@@ -182,7 +182,7 @@ if __name__ == '__main__':
   elif args['exppath'][-1] != '/': args['exppath'] += '/'
   for inFile in os.listdir(args['testpath']):
     # These are the expected output files (with parameters)
-    expFiles = glob(args['exppath'] + inFile.split('.')[0] + '_*')
+    expFiles = glob(args['exppath'] + inFile + '_*')
     if len(expFiles) == 0: continue
     # Link the test file to the expected output files
     cases[args['testpath'] + inFile] = expFiles
