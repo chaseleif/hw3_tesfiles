@@ -297,6 +297,7 @@ def drawsplitpane(scr, lhs, lpos, rhs, rpos, highlight, paneshmt=0, halfgap=2):
     if highlight:
       # if the strings match (without leading/trailing space)
       if i+lpos[0] < len(lhs) and i+rpos[0] < len(rhs) and \
+            i+lpos[0] >= 0 and i+rpos[0] >= 0 and \
             lhs[lpos[0]+i].strip() == rhs[rpos[0]+i].strip():
         # make bold green
         color = curses.color_pair(1) | curses.A_BOLD
@@ -304,14 +305,18 @@ def drawsplitpane(scr, lhs, lpos, rhs, rpos, highlight, paneshmt=0, halfgap=2):
       else: color = curses.color_pair(0)
     # draw lhs if we have a row here
     if lstop != lpos[1]:
-      if i+lpos[0] < len(lhs):
+      if i+lpos[0] < len(lhs) and i+lpos[0] >= 0:
         scr.insstr(i, 0, lhs[lpos[0]+i][lpos[1]:lstop], color)
+      elif i+lpos[0] == -1:
+        scr.insstr(i, 1, 'TOP', infocolor)
       elif i+lpos[0] == len(lhs):
         scr.insstr(i, 1, 'END', infocolor)
     # draw rhs if we have a row here
     if rstop != rpos[1]:
-      if i+rpos[0] < len(rhs):
+      if i+rpos[0] < len(rhs) and i+rpos[0] >= 0:
         scr.insstr(i, rstart, rhs[rpos[0]+i][rpos[1]:rstop], color)
+      elif i+rpos[0] == -1:
+        scr.insstr(i, width-4, 'TOP', infocolor)
       elif i+rpos[0] == len(rhs):
         scr.insstr(i, width-4, 'END', infocolor)
   scr.refresh()

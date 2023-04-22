@@ -44,10 +44,8 @@ import argparse, difflib, re, os, shlex, sys
 from signal import Signals
 from subprocess import Popen, DEVNULL, PIPE
 sys.dont_write_bytecode = True
-try:
-  from diffwin import DiffWindow
-except ModuleNotFoundError: DiffWindow = None
-sys.dont_write_bytecode = False
+from diffwin import DiffWindow
+from cursemenu import filemenu
 
 '''
 runproc(cmd, filepos, filename)
@@ -122,8 +120,9 @@ def dotests(cases, program):
           print('~~', program, 'terminated with signal', Signals(-output[1]))
         continue
       # Handle normal exit
-      out = [line.rstrip() for line in output[0][0].split('\n') \
-                              if line.strip() != '']
+      stdout = [line.rstrip() for line in output[0][0].split('\n') \
+                                if line.strip() != '']
+      out = None
       # Assignment directions say to put output in this file
       if os.path.isfile('cache_sim_output'):
         with open('cache_sim_output','r') as infile:
@@ -134,6 +133,17 @@ def dotests(cases, program):
                                             if line.strip() != '']
         # Remove the generated output file
         os.remove('cache_sim_output')
+      else:
+        with DiffWindow() as win:
+          _, outfilename = filemenu(win.stdscr, title='Select output file')
+        if outfilename:
+          with open(outfilename,'r') as infile:
+            out = [line.rstrip() for line in infile.readlines() \
+                                              if line.strip() != '']
+          os.remove(outfilename)
+      if not out:
+        out = stdout
+        stdout = None
       # Get our expected output
       exp = []
       with open(expfile, 'r') as infile:
@@ -151,13 +161,13 @@ def dotests(cases, program):
       if matches == True:
         print('Actual output matches expected output\n')
         continue
-      # Ask whether to use curses or difflib
-      if DiffWindow and input('Open ' + test + ' in curses? (y/n): ') == 'y':
-        with DiffWindow() as win: win.showdiff(out, exp)
-      else:
-        for line in difflib.context_diff(a=out, fromfile='Actual',
-                                          b=exp, tofile='Expected'):
+      if stdout and len(stdout) > 0:
+        print('~~ stdout:')
+        for line in stdout:
           print(line)
+      # Ask whether to use curses or difflib
+      with DiffWindow() as win: win.showdiff(out, exp)
+      _ = input('Press the enter key to continue . . .')
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(add_help=False,
