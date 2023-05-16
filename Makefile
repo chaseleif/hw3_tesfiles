@@ -1,29 +1,27 @@
-CC:=gcc
-CFLAGS:=-Wall -std=c99
+CC:=g++
+CFLAGS:=-std=c++11
 DEBUGFLAGS:=-O0 -g
 
 BIN:=cache_sim
-SOURCE:=cache_sim.c
+SRC:=$(wildcard *.cpp)
+OBJ:=$(SRC:.cpp=.o)
+
+all: $(BIN)
 
 .PHONY: clean test $(BIN)
 
-$(BIN): $(SOURCE)
+$(BIN): $(OBJ)
 	$(CC) $(CFLAGS) $(DEBUGFLAGS) -o $@ $^
-
-clean:
 	rm -f *.o
 
-test/cursemenu.py: cursemenu.py
-	cp $< $@
+%.o: %.cpp
+	$(CC) $(CFLAGS) $(DEBUGFLAGS) -c -o $@ $<
 
-test/diffwin.py: diffwin.py test/cursemenu.py
-	cp $< $@
+clean:
+	rm -f $(BIN) *.o
 
-test/testOutput.py: testOutput.py
-	cp $< $@
-
-test: $(BIN) test/diffwin.py test/testOutput.py
-	python3 ./test/testOutput.py \
+test: $(BIN)
+	python3 test/testOutput.py \
 --testpath test/cases --exppath test/exp \
 --program $<
 
