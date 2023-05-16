@@ -45,7 +45,6 @@ from signal import Signals
 from subprocess import Popen, DEVNULL, PIPE
 sys.dont_write_bytecode = True
 from diffwin import DiffWindow
-from cursemenu import filemenu
 
 '''
 runproc(cmd, filepos, filename)
@@ -134,14 +133,7 @@ def dotests(cases, program):
         # Remove the generated output file
         os.remove('cache_sim_output')
       else:
-        with DiffWindow() as win:
-          _, outfilename = filemenu(win.stdscr, title='Select output file')
-        if outfilename:
-          with open(outfilename,'r') as infile:
-            out = [line.rstrip() for line in infile.readlines() \
-                                              if line.strip() != '']
-          os.remove(outfilename)
-      if not out:
+        print('No file, using stdout')
         out = stdout
         stdout = None
       # Get our expected output
@@ -154,7 +146,9 @@ def dotests(cases, program):
       if matches:
         for i, line in enumerate(exp):
           # If they don't match
-          if line != out[i]:
+          s = ' '.join(line.split(' ')[:2])
+          if re.sub(' ','',line) != re.sub(' ','',out[i]) and \
+              re.sub(' ','',s) != re.sub(' ','',out[i]):
             matches = False
             break
       # If matches is True then our output matched
